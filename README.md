@@ -7,7 +7,6 @@ Start by forking the repository.
 ## Prerequisites
 
 NodeJS - https://nodejs.org/en/download/
-MongoDB Community Server - https://www.mongodb.com/try/download/community
 
 ## Getting started
 
