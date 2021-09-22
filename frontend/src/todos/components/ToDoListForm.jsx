@@ -25,13 +25,14 @@ const useStyles = makeStyles({
   }
 })
 
-export const ToDoListForm = ({ toDoList, saveToDoList }) => {
+export const ToDoListForm = ({ todos, toDoList, saveToDoList, setTodos }) => {
   const classes = useStyles()
-  const [todos, setTodos] = useState(toDoList.todos)
+  const [content, setContent] = useState()
+  const [completed, setCompleted] = useState()
 
   const handleSubmit = event => {
     event.preventDefault()
-    saveToDoList(toDoList.id, { todos })
+    saveToDoList(content, completed)
   }
 
   return (
@@ -41,20 +42,16 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
           {toDoList.title}
         </Typography>
         <form onSubmit={handleSubmit} className={classes.form}>
-          {todos.map((name, index) => (
+          {todos.map((todo, index) => (
             <div key={index} className={classes.todoLine}>
               <Typography className={classes.standardSpace} variant='h6'>
                 {index + 1}
               </Typography>
               <TextField
                 label='What to do?'
-                value={name}
+                value={todo.content}
                 onChange={event => {
-                  setTodos([ // immutable update
-                    ...todos.slice(0, index),
-                    event.target.value,
-                    ...todos.slice(index + 1)
-                  ])
+                  setContent(event.target.value)
                 }}
                 className={classes.textField}
               />
@@ -63,10 +60,7 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
                 color='secondary'
                 className={classes.standardSpace}
                 onClick={() => {
-                  setTodos([ // immutable delete
-                    ...todos.slice(0, index),
-                    ...todos.slice(index + 1)
-                  ])
+                  // deleteTodo(todo._id)
                 }}
               >
                 <DeleteIcon />
@@ -78,7 +72,7 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
               type='button'
               color='primary'
               onClick={() => {
-                setTodos([...todos, ''])
+                setTodos([...todos, {content: '', completed: 'false'}])
               }}
             >
               Add Todo <AddIcon />
