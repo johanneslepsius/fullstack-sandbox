@@ -7,14 +7,21 @@ Start by forking the repository.
 ## Prerequisites
 
 NodeJS - https://nodejs.org/en/download/
+MongoDB - https://www.mongodb.com/try/download/community
 
 ## Getting started
 
 ### To start the backend:
 
+Get started with MongoDB - https://www.robinwieruch.de/mongodb-windows-setup
+Further down on the link page is instructions for Mac as well.
+
 - Navigate to the backend folder
 - Run 'npm ci'
 - Run 'npm start'
+
+- UNcomment line 37 (seedLists()) in index.js and hit save
+- comment out line 37 in index.js and hit save again. this will seed the database with two recipelists since list crud is not part of this assignment.
 
 ### To start the frontend:
 
