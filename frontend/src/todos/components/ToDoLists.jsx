@@ -16,7 +16,17 @@ export const ToDoLists = ({ style }) => {
   const [toDoLists, setToDoLists] = useState({})
   const [activeList, setActiveList] = useState()
 
-  const [todos, setTodos] = useState()
+  const [toDos, setToDos] = useState([])
+  const [updatedToDos, setUpdatedToDos] = useState([])
+
+  const getTodos = () => {
+    axios(`http://localhost:8080/lists/${activeList._id}`)
+      .then(res => {
+        setToDos(res.data)
+        console.log(res.data)
+      })
+      .catch(err => console.error(err))
+  }
 
   useEffect(() => {
     axios('http://localhost:8080/lists')
@@ -28,20 +38,34 @@ export const ToDoLists = ({ style }) => {
   }, [])
 
   useEffect(() => {
-    activeList && axios(`http://localhost:8080/lists/${activeList._id}`)
-      .then(res => {
-        setTodos(res.data)
-        console.log(res.data)
-      })
-      .catch(err => console.error(err))
+    activeList && getTodos()
   }, [activeList])
 
-  const saveToDoList = ({content, completed}) => {
-    axios.post('http://localhost:8080/todos', {
-      "content": content,
-      "completed": completed,
-      "listId": toDoLists[activeList]._id,
-    })
+  const saveToDo = () => {
+    for (let todo of updatedToDos) {
+      if (!toDos[todo]._id) {
+        axios.post('http://localhost:8080/todos', {
+        "content": toDos[todo].content,
+        "completed": toDos[todo].completed || false,
+        "listId": activeList._id,
+        })
+      } else if (toDos[todo]._id) {
+        axios.put(`http://localhost:8080/todos/${toDos[todo]._id}`, {
+        "content": toDos[todo].content,
+        "completed": toDos[todo].completed || false,
+        "listId": activeList._id,
+      })
+      }
+    }
+    setUpdatedToDos([])
+  }
+
+  const deleteToDo = (id) => {
+    axios.delete(`http://localhost:8080/todos/${id}`)
+      .then(() => {
+        getTodos()
+      })
+    
   }
 
   if (!toDoLists.length) return null
@@ -68,12 +92,15 @@ export const ToDoLists = ({ style }) => {
         </List>
       </CardContent>
     </Card>
-    {todos && <ToDoListForm
+    {activeList && <ToDoListForm
       key={activeList._id} // use key to make React recreate component to reset internal state
       toDoList={activeList}
-      todos={todos}
-      saveToDoList={saveToDoList}
-      setTodos={setTodos}
+      toDos={toDos}
+      updatedToDos={updatedToDos}
+      saveToDo={saveToDo}
+      setUpdatedToDos={setUpdatedToDos}
+      setToDos={setToDos}
+      deleteToDo={deleteToDo}
     />}
   </Fragment>
 }

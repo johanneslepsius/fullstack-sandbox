@@ -25,14 +25,12 @@ const useStyles = makeStyles({
   }
 })
 
-export const ToDoListForm = ({ todos, toDoList, saveToDoList, setTodos }) => {
+export const ToDoListForm = ({ toDos, updatedToDos, toDoList, saveToDo, setToDos, setUpdatedToDos, deleteToDo }) => {
   const classes = useStyles()
-  const [content, setContent] = useState()
-  const [completed, setCompleted] = useState()
 
-  const handleSubmit = event => {
+  const submitForm = event => {
     event.preventDefault()
-    saveToDoList(content, completed)
+    saveToDo()
   }
 
   return (
@@ -41,8 +39,8 @@ export const ToDoListForm = ({ todos, toDoList, saveToDoList, setTodos }) => {
         <Typography component='h2'>
           {toDoList.title}
         </Typography>
-        <form onSubmit={handleSubmit} className={classes.form}>
-          {todos.map((todo, index) => (
+        <form onSubmit={submitForm} className={classes.form}>
+          {toDos?.map((todo, index) => (
             <div key={index} className={classes.todoLine}>
               <Typography className={classes.standardSpace} variant='h6'>
                 {index + 1}
@@ -51,7 +49,15 @@ export const ToDoListForm = ({ todos, toDoList, saveToDoList, setTodos }) => {
                 label='What to do?'
                 value={todo.content}
                 onChange={event => {
-                  setContent(event.target.value)
+                  setToDos(
+                    [...toDos.slice(0, index),
+                    {...toDos[index], content: event.target.value},
+                    ...toDos.slice(index + 1)]
+                  )
+                  if (!updatedToDos.includes(index)) {
+                    setUpdatedToDos([...updatedToDos, index])
+                  }
+                  
                 }}
                 className={classes.textField}
               />
@@ -60,7 +66,7 @@ export const ToDoListForm = ({ todos, toDoList, saveToDoList, setTodos }) => {
                 color='secondary'
                 className={classes.standardSpace}
                 onClick={() => {
-                  // deleteTodo(todo._id)
+                  deleteToDo(todo._id)
                 }}
               >
                 <DeleteIcon />
@@ -72,7 +78,7 @@ export const ToDoListForm = ({ todos, toDoList, saveToDoList, setTodos }) => {
               type='button'
               color='primary'
               onClick={() => {
-                setTodos([...todos, {content: '', completed: 'false'}])
+                setToDos([...toDos, {content: '', completed: 'false'}])
               }}
             >
               Add Todo <AddIcon />
