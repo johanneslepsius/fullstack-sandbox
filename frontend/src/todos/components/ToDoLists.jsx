@@ -19,7 +19,7 @@ export const ToDoLists = ({ style }) => {
   const [toDos, setToDos] = useState([])
   const [updatedToDos, setUpdatedToDos] = useState([])
 
-  const [allCompleted, setAllCompleted] = useState({completed: false})
+  const [allCompleted, setAllCompleted] = useState()
 
   const getToDos = async () => {
     try {
@@ -51,6 +51,8 @@ export const ToDoLists = ({ style }) => {
     const uncompleted = toDos.filter(toDo => toDo.completed === false)
     if (uncompleted.length === 0 && activeList) {
       setAllCompleted({completed: true, list: activeList._id})
+    } else {
+      setAllCompleted()
     }
   }, [toDos])
 
@@ -105,7 +107,7 @@ export const ToDoLists = ({ style }) => {
               <ReceiptIcon />
             </ListItemIcon>
             <ListItemText primary={el.name} />
-            {allCompleted.completed && allCompleted.list === el._id && toDos.length > 0 && <p>Completed</p>}
+            {allCompleted?.completed && allCompleted.list === el._id && toDos.length > 0 && <p>Completed</p>}
           </ListItem>)}
         </List>
       </CardContent>
