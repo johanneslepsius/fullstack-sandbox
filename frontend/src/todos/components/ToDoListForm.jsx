@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/styles'
 import { TextField, Card, CardContent, CardActions, Button, Typography, Checkbox} from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
@@ -25,7 +25,7 @@ const useStyles = makeStyles({
   }
 })
 
-const ToDoListForm = ({ toDos, updatedToDos, toDoList, saveToDo, setToDos, setUpdatedToDos, deleteToDo }) => {
+const ToDoListForm = ({ toDos, setToDos, updatedToDos, setUpdatedToDos, toDoList, saveToDo, deleteToDo }) => {
   const classes = useStyles()
 
   const submitForm = event => {
@@ -76,6 +76,7 @@ const ToDoListForm = ({ toDos, updatedToDos, toDoList, saveToDo, setToDos, setUp
                 onChange={event => {
                   handleChange('COMPLETE', index, {completed: !toDo.completed})
                 }}
+                color="primary"
               />
               <TextField
                 label='What to do?'

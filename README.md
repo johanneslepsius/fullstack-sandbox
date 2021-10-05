@@ -20,9 +20,6 @@ Further down on the link page is instructions for Mac as well.
 - Run 'npm ci'
 - Run 'npm start'
 
-- UNcomment line 37 (seedLists()) in index.js and hit save
-- comment out line 37 in index.js and hit save again. this will seed the database with two recipelists since list crud is not part of this assignment.
-
 ### To start the frontend:
 
 - Navigate to the frontend folder
