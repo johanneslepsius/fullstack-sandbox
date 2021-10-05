@@ -10,7 +10,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ReceiptIcon from '@material-ui/icons/Receipt'
 import Typography from '@material-ui/core/Typography'
 
-import { ToDoListForm } from './ToDoListForm'
+import ToDoListForm from './ToDoListForm'
 
 export const ToDoLists = ({ style }) => {
   const [toDoLists, setToDoLists] = useState({})
@@ -19,53 +19,61 @@ export const ToDoLists = ({ style }) => {
   const [toDos, setToDos] = useState([])
   const [updatedToDos, setUpdatedToDos] = useState([])
 
-  const getTodos = () => {
-    axios(`http://localhost:8080/lists/${activeList._id}`)
-      .then(res => {
-        setToDos(res.data)
-        console.log(res.data)
-      })
-      .catch(err => console.error(err))
+  const getToDos = async () => {
+    try {
+      const res = await axios(`http://localhost:8081/lists/${activeList._id}`)
+      setToDos(res.data)
+      console.log(res.data)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
-  useEffect(() => {
-    axios('http://localhost:8080/lists')
-      .then(res => {
+  useEffect( () => {
+    (async () => {
+      try {
+        const res = await axios('http://localhost:8081/lists')
         setToDoLists(res.data)
         console.log(res.data)
-      })
-      .catch(err => console.error(err))
+    } catch (e) {
+        console.error(e)
+    }
+    })()
   }, [])
 
   useEffect(() => {
-    activeList && getTodos()
+    activeList && getToDos()
   }, [activeList])
 
   const saveToDo = () => {
-    for (let todo of updatedToDos) {
-      if (!toDos[todo]._id) {
-        axios.post('http://localhost:8080/todos', {
-        "content": toDos[todo].content,
-        "completed": toDos[todo].completed || false,
+    
+    for (let toDo of updatedToDos) {
+      const content = {
+        "content": toDos[toDo].content,
+        "completed": toDos[toDo].completed || false,
         "listId": activeList._id,
-        })
-      } else if (toDos[todo]._id) {
-        axios.put(`http://localhost:8080/todos/${toDos[todo]._id}`, {
-        "content": toDos[todo].content,
-        "completed": toDos[todo].completed || false,
-        "listId": activeList._id,
-      })
       }
+      try {
+        if (!toDos[toDo]._id) {
+          axios.post('http://localhost:8081/todos', content)
+        } else if (toDos[toDo]._id) {
+          axios.put(`http://localhost:8081/todos/${toDos[toDo]._id}`, content)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+      
     }
     setUpdatedToDos([])
   }
 
-  const deleteToDo = (id) => {
-    axios.delete(`http://localhost:8080/todos/${id}`)
-      .then(() => {
-        getTodos()
-      })
-    
+  const deleteToDo = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8081/todos/${id}`)
+      getToDos()
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   if (!toDoLists.length) return null

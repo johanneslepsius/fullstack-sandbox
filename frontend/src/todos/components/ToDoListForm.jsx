@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/styles'
-import { TextField, Card, CardContent, CardActions, Button, Typography} from '@material-ui/core'
+import { TextField, Card, CardContent, CardActions, Button, Typography, Checkbox} from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import AddIcon from '@material-ui/icons/Add'
 
@@ -8,7 +8,7 @@ const useStyles = makeStyles({
   card: {
     margin: '1rem'
   },
-  todoLine: {
+  toDoLine: {
     display: 'flex',
     alignItems: 'center'
   },
@@ -25,7 +25,7 @@ const useStyles = makeStyles({
   }
 })
 
-export const ToDoListForm = ({ toDos, updatedToDos, toDoList, saveToDo, setToDos, setUpdatedToDos, deleteToDo }) => {
+const ToDoListForm = ({ toDos, updatedToDos, toDoList, saveToDo, setToDos, setUpdatedToDos, deleteToDo }) => {
   const classes = useStyles()
 
   const submitForm = event => {
@@ -33,31 +33,55 @@ export const ToDoListForm = ({ toDos, updatedToDos, toDoList, saveToDo, setToDos
     saveToDo()
   }
 
+  const handleChange = (type, index, action) => {
+    if (!updatedToDos.includes(index)) {
+      setUpdatedToDos([...updatedToDos, index])
+    }
+
+    switch (type){
+      case 'COMPLETE':
+        setToDos(
+          [...toDos.slice(0, index),
+          {...toDos[index], completed: action.completed},
+          ...toDos.slice(index + 1)]
+        )
+        break
+      case 'CONTENT':
+        setToDos(
+          [...toDos.slice(0, index),
+          {...toDos[index], content: action.content},
+          ...toDos.slice(index + 1)]
+        )
+        break
+      default:
+        return
+    }
+    
+  }
+
   return (
     <Card className={classes.card}>
       <CardContent>
         <Typography component='h2'>
-          {toDoList.title}
+          {toDoList.name}
         </Typography>
         <form onSubmit={submitForm} className={classes.form}>
-          {toDos?.map((todo, index) => (
-            <div key={index} className={classes.todoLine}>
+          {toDos?.map((toDo, index) => (
+            <div key={index} className={classes.toDoLine}>
               <Typography className={classes.standardSpace} variant='h6'>
                 {index + 1}
               </Typography>
+              <Checkbox 
+                checked={toDo.completed || false} 
+                onChange={event => {
+                  handleChange('COMPLETE', index, {completed: !toDo.completed})
+                }}
+              />
               <TextField
                 label='What to do?'
-                value={todo.content}
+                value={toDo.content}
                 onChange={event => {
-                  setToDos(
-                    [...toDos.slice(0, index),
-                    {...toDos[index], content: event.target.value},
-                    ...toDos.slice(index + 1)]
-                  )
-                  if (!updatedToDos.includes(index)) {
-                    setUpdatedToDos([...updatedToDos, index])
-                  }
-                  
+                  handleChange('CONTENT', index, {content: event.target.value})
                 }}
                 className={classes.textField}
               />
@@ -66,7 +90,7 @@ export const ToDoListForm = ({ toDos, updatedToDos, toDoList, saveToDo, setToDos
                 color='secondary'
                 className={classes.standardSpace}
                 onClick={() => {
-                  deleteToDo(todo._id)
+                  deleteToDo(toDo._id)
                 }}
               >
                 <DeleteIcon />
@@ -92,3 +116,5 @@ export const ToDoListForm = ({ toDos, updatedToDos, toDoList, saveToDo, setToDos
     </Card>
   )
 }
+
+export default ToDoListForm
