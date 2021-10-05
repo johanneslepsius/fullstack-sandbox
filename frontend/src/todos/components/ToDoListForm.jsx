@@ -103,7 +103,7 @@ const ToDoListForm = ({ toDos, setToDos, updatedToDos, setUpdatedToDos, toDoList
               type='button'
               color='primary'
               onClick={() => {
-                setToDos([...toDos, {content: '', completed: 'false'}])
+                setToDos([...toDos, {content: '', completed: false}])
               }}
             >
               Add Todo <AddIcon />
